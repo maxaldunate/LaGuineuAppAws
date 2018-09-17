@@ -1,3 +1,4 @@
+@echo off
 REM References
 REM https://github.com/aws-samples/aws-serverless-ember
 REM https://aws.amazon.com/blogs/developer/creating-and-deploying-a-serverless-web-application-with-cloudformation-and-ember-js/
