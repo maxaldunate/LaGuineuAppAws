@@ -1,5 +1,5 @@
 {
-  "name": "aws-cognito-angular-quickstart",
+  "name": "la-guineu-app-aws",
   "version": "1.0.0",
   "author": "Vladimir Budilov",
   "homepage": "http://cognito.budilov.com",
@@ -43,7 +43,7 @@
     "codelyzer": "4.0.1",
     "cookie-parser": "~1.4.3",
     "core-js": "2.4.1",
-    "debug": "~2.2.0",
+    "debug": "~2.6.9",
     "ejs": "^2.5.2",
     "enhanced-resolve": "^3.3.0",
     "express": "~4.13.4",
