@@ -39,7 +39,7 @@ Resources:
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: !Join [ "", [!Ref AppName, "-UserPool"] ]
+      UserPoolName: !Join [ "", [!Ref AppName, "_UserPool"] ]
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: false
       AutoVerifiedAttributes: 
@@ -62,13 +62,14 @@ Resources:
     Type: AWS::Cognito::UserPoolClient
     DependsOn: CognitoUserPool
     Properties:
-      ClientName: !Join [ "", [ !Ref AppName, "-ClientName"] ]
+      ClientName: !Join [ "", [ !Ref AppName, "_ClientName"] ]
       UserPoolId: !Ref CognitoUserPool
       GenerateSecret: false
 
   CognitoIdentityPool:
     Type: AWS::Cognito::IdentityPool
     Properties:
+      IdentityPoolName: !Join [ "", [!Ref AppName, "_IdentityPool"] ]
       AllowUnauthenticatedIdentities: true
       CognitoIdentityProviders:
         - ClientId: !Ref CognitoUserPoolClient
@@ -80,7 +81,7 @@ Resources:
     Properties:
       IdentityPoolId: !Ref CognitoIdentityPool
       Roles:
-        authenticated: !GetAtt UnauthenticatedRole.Arn
+        authenticated: !GetAtt AuthenticatedRole.Arn
         unauthenticated: !GetAtt UnauthenticatedRole.Arn
 
   UnauthenticatedRole:
@@ -100,7 +101,7 @@ Resources:
               cognito-identity.amazonaws.com:amr: unauthenticated
       Policies:
         -
-          PolicyName: LaGuineuServerlessUnauthenticatedApi
+          PolicyName: UnauthenticatedRolePolicy1
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -111,13 +112,68 @@ Resources:
               Resource:
               - "*"
 
+  AuthenticatedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Federated: cognito-identity.amazonaws.com
+          Action: sts:AssumeRoleWithWebIdentity
+          Condition:
+            StringEquals:
+              cognito-identity.amazonaws.com:aud: !Ref CognitoIdentityPool
+            ForAnyValue:StringLike:
+              cognito-identity.amazonaws.com:amr: authenticated
+      Policies:
+        -
+          PolicyName: AuthenticatedRolePolicy1
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - mobileanalytics:PutEvents
+              - cognito-sync:*
+              - cognito-identity:*
+              Resource:
+              - "*"
+            - Effect: Allow
+              Action:
+              - dynamodb:GetItem
+              - dynamodb:BatchGetItem
+              - dynamodb:Query
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              Resource:
+              -  !GetAtt UserSessionDynamoTable.Arn
+              Condition:
+                ForAllValues:StringEquals:
+                  dynamodb:LeadingKeys:
+                  - "${cognito-identity.amazonaws.com:sub}"
+
 Outputs:
-  LaGuineuIdentityPoolId:
+  ConfigIdentityPoolId:
     Description: Cognito Identity Pool ID
     Value: !Ref CognitoIdentityPool
-  LaGuineuPoolsId:
+  ConfigUserPoolId:
     Description: Cognito User Pools ID
     Value: !Ref CognitoUserPool
-  LaGuineuClientId:
+  ConfigClientId:
     Description: Cognito User Pools App Client ID
     Value: !Ref CognitoUserPoolClient
+  DynamoTableEndpoint:
+    Description: Dynamodb Table Endpoint
+    Value: !GetAtt UserSessionDynamoTable.Arn   
+  DynamoTableName:
+    Description: Dynamodb Table Name
+    Value: !Ref UserSessionDynamoTable   
+  UnauthenticatedRoleName:
+    Description: Unauthenticated Role Name
+    Value: !Ref UnauthenticatedRole     
+  AuthenticatedRoleName:
+    Description: Authenticated Role Name
+    Value: !Ref AuthenticatedRole   
