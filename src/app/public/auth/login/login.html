@@ -13,7 +13,7 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label" for="signupPassword">Password</label>
+            <label class="control-label" for="signupPassword">Contraseña</label>
             <input id="signupPassword" required type="password" maxlength="25" class="form-control"
                    length="40" [(ngModel)]="password" [ngModelOptions]="{standalone: true}">
         </div>
@@ -25,9 +25,9 @@
 
         <hr>
         <p>
-            <a [routerLink]="['/home/register']"> <i class="fa fa-fw fa-group"></i> Register</a>
-            <a [routerLink]="['/home/forgotPassword']"> <i class="fa fa-fw fa-group"></i> Forgot Password?</a><br/>
-            <a [routerLink]="['/home/resendCode']"> <i class="fa fa-fw fa-group"></i> Resend Confirmation Code</a>
+            <a [routerLink]="['/home/register']"> <i class="fa fa-fw fa-group"></i> Registrarse</a>
+            <a [routerLink]="['/home/forgotPassword']"> <i class="fa fa-fw fa-group"></i> Olvidé la contraseña!</a><br/>
+            <a [routerLink]="['/home/resendCode']"> <i class="fa fa-fw fa-group"></i> Re enviar código de confirmación</a>
         </p>
 
     </div>
@@ -36,7 +36,7 @@
         <awscognito-mfa [destination]="mfaData.destination"
                         [onSubmit]="mfaData.callback"></awscognito-mfa>
         <hr>
-        <a (click)="cancelMFA()" href="">Cancel</a>
+        <a (click)="cancelMFA()" href="">Cancelar</a>
     </div>
 </form>
 
