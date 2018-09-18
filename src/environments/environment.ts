@@ -16,7 +16,12 @@ export const environment = {
     cognito_idp_endpoint: '',
     cognito_identity_endpoint: '',
     sts_endpoint: '',
-    dynamodb_endpoint: 'arn:aws:dynamodb:eu-west-1:591364439420:table/LaguineuUserSession',
+    dynamodb_endpoint: '',
     s3_endpoint: ''
+
+
+//arn:aws:dynamodb:eu-west-1:591364439420:table/LaguineuUserSession
+
+
 };
 
